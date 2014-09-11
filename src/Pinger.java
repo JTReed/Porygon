@@ -1,3 +1,6 @@
+import java.util.*;
+import java.net.*;
+
 
 public class Pinger
 {
@@ -13,60 +16,58 @@ public class Pinger
 	
 	public static void main(String args[])
 	{
-		/*
-		// confirm 
-		if(args.length == 8) {
-			isClient = true;
-			System.out.println("Client Mode");
-		} 
-		else if(args.length != 2) {
-			System.out.println("ERROR: missing or additional arguments");
+		// HashTable accessible with keys -l, -h, -r, -c
+		Hashtable<String, String> arguments =  processArgs(args);
+		
+		if(isClient) {
+			// CLIENT MODE
 		}
 		else {
-			System.out.println("Server Mode");
+			// SERVER MODE
 		}
-		*/
-		String[][] arguments =  processArgs(args);
 		
 		
 	}
 	
-	public static String[][] processArgs(String[] args)
+	public static Hashtable<String, String> processArgs(String[] args)
 	{
-		if(DEBUG) System.out.println("Processing Command Line Arguments");
+		if(DEBUG) System.out.println("Processing Command Line Arguments\n");
 		
+		// confirm a valid number of arguments was entered
 		if(args.length != 2 && args.length != 8)
 		{
 			System.out.println("ERROR: missing or additional arguments");
 			System.exit(1);
 		}
 		
-		String[][] arguments = new String[args.length / 2][2];
-		for(int row = 0; row < arguments.length; row++) {
-			for(int col = 0; col < 2; col++) {
-				arguments[row][col] = args[row * 2 + col].toString();
-				
-				if(col == 0) {
-					if( !(arguments[row][col].equals("-l") ||
-						arguments[row][col].equals("-r") ||
-						arguments[row][col].equals("-h") ||
-						arguments[row][col].equals("-c"))) 
-					{
-						System.out.println("ERROR: invalid argument " + arguments[row][col]);
-						System.exit(1);
-					}
-					
-					if(arguments[row][col].equals("-c"))	{
-						isClient = true;
-					}
+		String[][] argu = new String[args.length / 2][2];
+		Hashtable<String, String> arguments = new Hashtable<>();
+		
+		
+		for(int index = 0; index < args.length; index += 2) {
+			arguments.put(args[index], args[index + 1]);
+			
+			// confirm that only accepted commands are entered
+			if( !(args[index].equals("-l") ||
+					args[index].equals("-r") ||
+					args[index].equals("-h") ||
+					args[index].equals("-c"))) 
+				{
+					System.out.println("ERROR: invalid argument");
+					System.exit(1);
 				}
-					
-				if(DEBUG) System.out.print(arguments[row][col] + ((col == 0) ? " ":"\n"));
+			
+			if(args[index].equals("-c"))	{
+				isClient = true;
+			}
+			
+			// confirm that this is the correct number of arguments for each mode
+			if((isClient && arguments.size() != 4) && (!isClient && arguments.size() != 1)) {
+				System.out.println("ERROR: missing or additional arguments");
+				System.exit(1);
 			}
 		}
-		
-		if(DEBUG) System.out.println("\n" + ((isClient) ? "Client":"Server") + " Mode");
-		
+			
 		return arguments;
 	}	
 }
