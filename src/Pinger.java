@@ -2,6 +2,8 @@ import java.util.Hashtable;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
@@ -57,12 +59,15 @@ public class Pinger
 		
 		try {			
 			// get IP address by hostname
+			localIP = InetAddress.getLocalHost();
 			remoteIP = InetAddress.getByName(hostName);
 			
 			if(DEBUG) 
 				System.out.println("remote: " + remoteIP.toString() + " on port " + remotePort);
 			
-			socket = new DatagramSocket(localPort);
+			//socket = new DatagramSocket(localPort);
+			socket = new DatagramSocket();
+			socket.bind( new InetSocketAddress( remoteIP, localPort ) );
 		} catch (IOException e) {
 			System.out.println("ERROR: Can't create socket, " + e);
 		}
