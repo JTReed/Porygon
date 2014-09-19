@@ -67,7 +67,7 @@ public class Pinger
 			
 			//socket = new DatagramSocket(localPort);
 			socket = new DatagramSocket();
-			socket.bind( new InetSocketAddress( remoteIP, localPort ) );
+			socket.bind( new InetSocketAddress( localPort ) );
 		} catch (IOException e) {
 			System.out.println("ERROR: Can't create socket, " + e);
 		}
