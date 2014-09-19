@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 
 public class Pinger
 {
-	public static boolean isClient; //
+	public static boolean isClient;
 
 	public static int localPort;
 	public static String hostName;
@@ -18,35 +18,30 @@ public class Pinger
 	public static int packetCount;
 
 	// DEBUG stuff
-	final static boolean DEBUG = false;
+	final static boolean DEBUG = true;
 
-	public static void main(String args[]) throws InterruptedException
+	public static void main(String args[])
 	{
-		// HashTable accessible with keys -l, -h, -r, -c
-		Hashtable<String, String> arguments = processArgs(args);
-
-		localPort = Integer.parseInt(arguments.get("-l"));
-		if (isClient) {
+		processArgs( args );
+		
+		if ( isClient ) {
 			// CLIENT MODE - uses -l, -h, -r, -c
 			if (DEBUG)
 				System.out.println("Starting up in Client Mode");
-
-			hostName = arguments.get("-h");
-			remotePort = Integer.parseInt(arguments.get("-r"));
-			packetCount = Integer.parseInt(arguments.get("-c"));
 			
-			ClientMode(localPort, hostName, remotePort, packetCount);
-		} else {
+			ClientMode( );
+		} 
+		else {
 			// SERVER MODE - uses -l
 			if (DEBUG)
 				System.out.println("Starting up in Server Mode");
 			
-			ServerMode(localPort);
+			ServerMode( );
 		}
 
 	}
 	
-	static void ClientMode(int localPort, String remoteName, int remotePort, int packetCount) {
+	static void ClientMode( ) {
 		DatagramSocket socket = null;
 		InetAddress localIP = null;
 		InetAddress remoteIP = null;
@@ -64,7 +59,8 @@ public class Pinger
 			// get IP address by hostname
 			remoteIP = InetAddress.getByName(hostName);
 			
-			if(DEBUG) System.out.println("remote: " + remoteIP.toString() + " on port " + remotePort);
+			if(DEBUG) 
+				System.out.println("remote: " + remoteIP.toString() + " on port " + remotePort);
 			
 			socket = new DatagramSocket(localPort);
 		} catch (IOException e) {
@@ -72,7 +68,7 @@ public class Pinger
 		}
 		
 		for (int packetNum = 0; packetNum < packetCount; packetNum++) {
-			// send packet here
+			// send packet
 			ByteBuffer message = ByteBuffer.allocate(12);
 			sendTime = System.currentTimeMillis();
 
@@ -91,20 +87,18 @@ public class Pinger
 
 			DatagramPacket returnPacket = new DatagramPacket(new byte[12], 12);
 
+			// receive packet
 			try {
-				socket.setSoTimeout(1000); // wait for 1 second timeout
+				socket.setSoTimeout(1000); // wait for 1 second before error
 				socket.receive(returnPacket);
-
-				//ByteBuffer returnedMessage = ByteBuffer.allocate(12);
-				//returnedMessage.put(returnPacket.getData());
-				//System.out.println("Received packet " + returnedMessage.getInt(0) + " with send time " + returnedMessage.getLong(4));
-				
 				received++;
 				tripTime = System.currentTimeMillis() - sendTime;
 				if(DEBUG) System.out.println("packet returned in " + tripTime + " ms");
 				
 			} catch (IOException e) {
 				System.out.println("ERROR: couldn't receive packet, " + e);
+				lost++;
+				continue;
 			}
 			
 			ByteBuffer returnData = ByteBuffer.allocate(12);
@@ -113,12 +107,14 @@ public class Pinger
 			System.out.println("size=" + returnData.array().length + " from=" + returnPacket.getAddress() + 
 					" seq=" + returnData.getInt(0) + " rtt=" + tripTime + " ms");
 
+			// try to sleep because threads are terrible
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			
+			// take care of trip time comparisons
 			if (tripTime < minTripTime || minTripTime == 0) {
 				minTripTime = tripTime;
 			}
@@ -134,7 +130,7 @@ public class Pinger
 				"% rtt min/avg/max=" + minTripTime + "/" + avgTripTime + "/" + maxTripTime + "ms");
 	}
 	
-	static void ServerMode(int localPort) {
+	static void ServerMode( ) {
 		DatagramSocket socket = null;
 		InetAddress clientAddress = null;
 		
@@ -176,39 +172,35 @@ public class Pinger
 		}
 	}
 
-	public static Hashtable<String, String> processArgs(String[] args)
+	
+	public static void processArgs(String[] args) 
 	{
-		if (DEBUG)
+		if ( DEBUG ) {
 			System.out.println("Processing Command Line Arguments\n");
-
+		}
+		
 		// confirm a valid number of arguments was entered
 		if (args.length != 2 && args.length != 8) {
 			System.out.println("ERROR: missing or additional arguments");
 			System.exit(1);
 		}
-
-		Hashtable<String, String> arguments = new Hashtable<>();
-
-		for (int index = 0; index < args.length; index += 2) {
-			arguments.put(args[index], args[index + 1]);
-
-			// confirm that only accepted commands are entered
-			if (!(args[index].equals("-l") || args[index].equals("-r") || args[index].equals("-h") || args[index].equals("-c"))) {
-				System.out.println("ERROR: invalid argument");
-				System.exit(1);
-			}
-
-			if (args[index].equals("-c")) {
-				isClient = true;
-			}
-
-			// confirm that this is the correct number of arguments for each mode
-			if ((isClient && arguments.size() != 4) && (!isClient && arguments.size() != 1)) {
-				System.out.println("ERROR: missing or additional arguments");
-				System.exit(1);
+		
+		for ( int index = 0; index < args.length; index++) {
+			switch ( args[index] ) {
+				case "-l":
+					localPort = Integer.parseInt( args[index + 1] );
+					break;
+				case "-h":
+					hostName = args[index + 1];
+					break;
+				case "-r":
+					remotePort = Integer.parseInt( args[index + 1] );
+					break;
+				case "-c":
+					packetCount = Integer.parseInt( args[index + 1] );
+					isClient = true;
+					break;
 			}
 		}
-
-		return arguments;
 	}
 }
