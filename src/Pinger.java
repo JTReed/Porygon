@@ -133,10 +133,9 @@ public class Pinger
 			avgTripTime += tripTime;
 		}
 		
-		avgTripTime /= received;
-		
-		
 		if ( received != 0 ) { 
+			avgTripTime /= received;
+		
 			System.out.println("sent=" + sent + " received=" + received + 
 					" lost=" + (100 - ( int )( ( ( double )received / ( double )sent ) * 100.0 ) ) + 
 					"% rtt min/avg/max=" + minTripTime + "/" + avgTripTime + "/" + maxTripTime + "ms");
