@@ -21,6 +21,7 @@ public class Pinger
 
 	// DEBUG stuff
 	final static boolean DEBUG = false;
+	final static double FAIL_CHANCE = 0; 
 
 	public static void main(String args[])
 	{
@@ -69,7 +70,6 @@ public class Pinger
 			if(DEBUG) 
 				System.out.println("connecting to: " + remoteIP.toString() + " on port " + localPort);
 			
-			//socket = new DatagramSocket(localPort);
 			socket = new DatagramSocket( localPort );
 		} catch (IOException e) {
 			System.out.println("ERROR: Can't create socket, " + e);
@@ -160,6 +160,7 @@ public class Pinger
 			System.out.println("ERROR: Couldn't create socket, " + e);
 		}
 		
+		System.out.println( "Waiting for packets..." );
 		while(true) {
 			DatagramPacket receivedPacket = new DatagramPacket(new byte[12], 12);
 			
@@ -171,7 +172,7 @@ public class Pinger
 			receivedTime = System.currentTimeMillis();
 			
 			// 30% chance the packet will be dropped
-			if ( random.nextDouble() < 0.3 ) {
+			if ( random.nextDouble() < FAIL_CHANCE ) {
 				
 				if ( DEBUG )
 					System.out.println ( "Packet dropped" );
