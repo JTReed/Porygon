@@ -141,7 +141,8 @@ public class Pinger
 					"% rtt min/avg/max=" + minTripTime + "/" + avgTripTime + "/" + maxTripTime + "ms");
 		}
 		else {
-			System.out.println ( "No packets received ");
+			System.out.println("sent=" + sent + " received=" + received + 
+					" lost=" + (100 - ( int )( ( ( double )received / ( double )sent ) * 100.0 ) ) + "%");
 		}
 	}
 	
