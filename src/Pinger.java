@@ -1,4 +1,5 @@
 import java.util.Hashtable;
+import java.util.Random;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -8,7 +9,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 public class Pinger
 {
@@ -20,7 +20,7 @@ public class Pinger
 	public static int packetCount;
 
 	// DEBUG stuff
-	final static boolean DEBUG = true;
+	final static boolean DEBUG = false;
 
 	public static void main(String args[])
 	{
@@ -70,11 +70,12 @@ public class Pinger
 				System.out.println("connecting to: " + remoteIP.toString() + " on port " + localPort);
 			
 			//socket = new DatagramSocket(localPort);
-			socket = new DatagramSocket();
-			socket.bind( new InetSocketAddress( localPort ) );
+			socket = new DatagramSocket( localPort );
 		} catch (IOException e) {
 			System.out.println("ERROR: Can't create socket, " + e);
 		}
+		
+		System.out.println("connected to port " + socket.getPort() + " for real" );
 		
 		for (int packetNum = 0; packetNum < packetCount; packetNum++) {
 			// send packet
@@ -102,10 +103,9 @@ public class Pinger
 				socket.receive(returnPacket);
 				received++;
 				tripTime = System.currentTimeMillis() - sendTime;
-				if(DEBUG) System.out.println("packet returned in " + tripTime + " ms");
 				
 			} catch (IOException e) {
-				System.out.println("ERROR: couldn't receive packet, " + e);
+				System.out.println("Didn't receive packet");
 				lost++;
 				continue;
 			}
@@ -134,14 +134,21 @@ public class Pinger
 		}
 		
 		avgTripTime /= packetCount;
-		System.out.println("sent=" + packetCount + " received=" + received + 
-				" lost=" + (100.0 - ((double)packetCount/(double)received)*100) + 
-				"% rtt min/avg/max=" + minTripTime + "/" + avgTripTime + "/" + maxTripTime + "ms");
+		
+		if ( received != 0 ) { 
+			System.out.println("sent=" + packetCount + " received=" + received + 
+					" lost=" + (100.0 - ((double)packetCount/(double)received)*100) + 
+					"% rtt min/avg/max=" + minTripTime + "/" + avgTripTime + "/" + maxTripTime + "ms");
+		}
+		else {
+			System.out.println ( "No packets received ");
+		}
 	}
 	
 	static void ServerMode( ) {
 		DatagramSocket socket = null;
 		InetAddress clientAddress = null;
+		Random random = new Random();
 		
 		long receivedTime = 0;
 		InetAddress senderIP = null;
@@ -162,6 +169,15 @@ public class Pinger
 				System.out.println("ERROR: Couldn't receive packet, " + e);
 			}
 			receivedTime = System.currentTimeMillis();
+			
+			// 30% chance the packet will be dropped
+			if ( random.nextDouble() < 0.3 ) {
+				
+				if ( DEBUG )
+					System.out.println ( "Packet dropped" );
+				
+				continue;
+			}
 			
 			// Send reply.
 	        clientAddress = receivedPacket.getAddress();
