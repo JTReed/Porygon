@@ -59,11 +59,15 @@ public class Pinger
 		
 		try {			
 			// get IP address by hostname
-			localIP = InetAddress.getLocalHost();
 			remoteIP = InetAddress.getByName(hostName);
-			
+		}
+		catch ( IOException e) {
+			System.out.println( "ERROR: Can't get host address, " + e);
+		}
+		
+		try {
 			if(DEBUG) 
-				System.out.println("remote: " + remoteIP.toString() + " on port " + remotePort);
+				System.out.println("connecting to: " + remoteIP.toString() + " on port " + localPort);
 			
 			//socket = new DatagramSocket(localPort);
 			socket = new DatagramSocket();
