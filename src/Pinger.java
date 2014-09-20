@@ -50,12 +50,12 @@ public class Pinger
 
 		int sent = 0;
 		int received = 0;
-		double lost = 0.0;
+		int lost = 0;
 		long sendTime = 0;
 		long tripTime = 0;
-		double minTripTime = 0.0;
-		double avgTripTime = 0.0;
-		double maxTripTime = 0.0;
+		int minTripTime = 0;
+		int avgTripTime = 0;
+		int maxTripTime = 0;
 		
 		try {			
 			// get IP address by hostname
@@ -75,8 +75,6 @@ public class Pinger
 			System.out.println("ERROR: Can't create socket, " + e);
 		}
 		
-		System.out.println("connected to port " + socket.getPort() + " for real" );
-		
 		for (int packetNum = 0; packetNum < packetCount; packetNum++) {
 			// send packet
 			ByteBuffer message = ByteBuffer.allocate(12);
@@ -91,8 +89,10 @@ public class Pinger
 			try {
 				DatagramPacket pingPacket = new DatagramPacket(message.array(), message.array().length, remoteIP, remotePort);
 				socket.send(pingPacket);
+				sent++;
 			} catch (IOException e) {
 				System.out.println("ERROR: Failed to send packet");
+				continue;
 			}
 
 			DatagramPacket returnPacket = new DatagramPacket(new byte[12], 12);
@@ -105,7 +105,7 @@ public class Pinger
 				tripTime = System.currentTimeMillis() - sendTime;
 				
 			} catch (IOException e) {
-				System.out.println("Didn't receive packet");
+				System.out.println("Didn't receive packet " + packetNum);
 				lost++;
 				continue;
 			}
@@ -125,19 +125,20 @@ public class Pinger
 			
 			// take care of trip time comparisons
 			if (tripTime < minTripTime || minTripTime == 0) {
-				minTripTime = tripTime;
+				minTripTime = (int)tripTime;
 			}
 			if (tripTime > maxTripTime) {
-				maxTripTime = tripTime;
+				maxTripTime = (int)tripTime;
 			}
 			avgTripTime += tripTime;
 		}
 		
 		avgTripTime /= packetCount;
 		
+		
 		if ( received != 0 ) { 
-			System.out.println("sent=" + packetCount + " received=" + received + 
-					" lost=" + (100.0 - ((double)packetCount/(double)received)*100) + 
+			System.out.println("sent=" + sent + " received=" + received + 
+					" lost=" + (100 - (int)((double)received/(double)sent)*100) + 
 					"% rtt min/avg/max=" + minTripTime + "/" + avgTripTime + "/" + maxTripTime + "ms");
 		}
 		else {
@@ -155,7 +156,7 @@ public class Pinger
 		int packetNum = 0;
 		
 		try {
-			socket = new DatagramSocket(localPort);
+			socket = new DatagramSocket( localPort );
 		} catch (IOException e) {
 			System.out.println("ERROR: Couldn't create socket, " + e);
 		}
@@ -193,7 +194,7 @@ public class Pinger
 	         
 	        ByteBuffer data = ByteBuffer.allocate(12);
 	        data.put(buffer);
-	        System.out.println("time=" + receivedTime + " from=" + clientAddress.getHostAddress() + " seq=" + data.getInt(0) + " ms");
+	        System.out.println("time=" + receivedTime + " from=" + clientAddress.getHostAddress() + " seq=" + data.getInt(0));
 		}
 	}
 
