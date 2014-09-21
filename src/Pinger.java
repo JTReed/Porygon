@@ -102,7 +102,8 @@ public class Pinger
 				socket.setSoTimeout(1000); // wait for 1 second before error
 				socket.receive(returnPacket);
 				received++;
-				tripTime = System.currentTimeMillis() - sendTime;
+				ByteBuffer receivedBuf = ByteBuffer.allocate( 12 );
+				tripTime = System.currentTimeMillis() - receivedBuf.getLong( 4 );
 				
 			} catch (IOException e) {
 				System.out.println("Didn't receive packet " + packetNum);
