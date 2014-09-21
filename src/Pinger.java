@@ -78,11 +78,11 @@ public class Pinger
 		for (int packetNum = 0; packetNum < packetCount; packetNum++) {
 			// send packet
 			ByteBuffer message = ByteBuffer.allocate(12);
-			sendTime = System.currentTimeMillis();
+			//sendTime = System.currentTimeMillis();
 
 			// copy 4 byte sequence number and 8 byte timestamp into message
 			message.putInt(0, packetNum);
-			message.putLong(4, sendTime);
+			message.putLong( 4, System.currentTimeMillis() );
 			if (DEBUG)
 				System.out.println("Packet " + message.getInt(0) + " sent at time " + message.getLong(4));
 
