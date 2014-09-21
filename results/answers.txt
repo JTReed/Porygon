@@ -1,0 +1,23 @@
+Q2: 
+Latency: I predict that to ping from h1 to h4, which will pass through switch links 	L1, L2, and L3, it will take sum of the individual pings for those links. 
+	- 80ms + 20ms + 81ms = 181ms average rtt
+
+Q3:
+Latency: I predict that ping time will end up being slightly higher than if only one host was requesting a ping back due to any waiting that has to happen. Also, there is a chance that some packets may be dropped.
+- Trial 1
+	- h1->h4: sent=20 received=20 lost=0% rtt min/avg/max=180/181/190ms
+	- h8->h4: sent=20 received=20 lost=0% rtt min/avg/max=180/182/196ms
+	* No packets were dropped as the server returns packets immediately with no downtime to extend past the 1s timeout period.  h8 was started a fraction of a second after h1, so I assume that the 1ms longer time is due to having to wait for the server to return h1's packet first. Since the packets are so small, I can't imagine that much collision would happen due to bandwidth constraints.
+- Trial 2
+	- h7->h9: sent=20 received=20 lost=0% rtt min/avg/max=180/181/190ms
+	- h8->h9: sent=20 received=20 lost=0% rtt min/avg/max=180/182/192ms
+	* Again, the server started 2nd takes a tiny fraction of time longer
+- Trial 3
+	- h4->h1: sent=20 received=20 lost=0% rtt min/avg/max=180/181/191ms
+	- h9->h1: sent=20 received=20 lost=0% rtt min/avg/max=180/182/194ms
+	* Still same results - pretty much expected speed + a ms for the 2nd client
+- trial 4
+	- h10->h7: sent=20 received=20 lost=0% rtt min/avg/max=180/182/197ms
+	- h9->h7:  sent=20 received=20 lost=0% rtt min/avg/max=180/183/202ms
+	* This one was on average 1ms slower than the others, but still followed the "+1 ms for the second server" rule we've been seeing
+
