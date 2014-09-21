@@ -82,7 +82,7 @@ public class Pinger
 
 			// copy 4 byte sequence number and 8 byte timestamp into message
 			message.putInt(0, packetNum);
-			message.putLong( 4, System.currentTimeMillis() );
+			message.putLong( 4, sendTime = System.currentTimeMillis() );
 			if (DEBUG)
 				System.out.println("Packet " + message.getInt(0) + " sent at time " + message.getLong(4));
 
@@ -102,8 +102,7 @@ public class Pinger
 				socket.setSoTimeout(1000); // wait for 1 second before error
 				socket.receive(returnPacket);
 				received++;
-				ByteBuffer receivedBuf = ByteBuffer.allocate( 12 );
-				tripTime = System.currentTimeMillis() - receivedBuf.getLong( 4 );
+				tripTime = System.currentTimeMillis() - sendTime;
 				
 			} catch (IOException e) {
 				System.out.println("Didn't receive packet " + packetNum);
