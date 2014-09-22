@@ -21,3 +21,7 @@ Latency: I predict that ping time will end up being slightly higher than if only
 	- h9->h7:  sent=20 received=20 lost=0% rtt min/avg/max=180/183/202ms
 	* This one was on average 1ms slower than the others, but still followed the "+1 ms for the second server" rule we've been seeing
 
+Q4:
+Latency: I predict a combination between the last two problems. General time will be determined by the time it takes to ping over all the paths, but since two will be using the path L2, that time will be a little longer than expected. So instead of 181ms and 41 ms, I expect to see something like 182ms and 42ms.
+* The values weren't changed much at all. L2 is a pretty small-delay link (20ms), so that could potentially have to do with it? Not much congestion to bog stuff down.
+
