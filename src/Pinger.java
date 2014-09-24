@@ -192,6 +192,7 @@ public class Pinger
 			} catch (IOException e) {
 				System.out.println("ERROR: Could not reply, " + e);
 			}
+	        System.out.println( "sent after " + ( System.currentTimeMillis() - receivedTime ) );
 	         
 	        ByteBuffer data = ByteBuffer.allocate(12);
 	        data.put(buffer);
