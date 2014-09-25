@@ -12,7 +12,7 @@ public class Iperfer {
 	public static double time;
 
 	// DEBUG stuff
-	final static boolean DEBUG = true;
+	final static boolean DEBUG = false;
 
 	public static void main(String args[]) {
 		processArgs(args);
@@ -70,7 +70,7 @@ public class Iperfer {
 		}
 
 		System.out.println("sent=" + bytesSent / 1024 + "KB" + " rate="
-				+ ((bytesSent / 1024) / 128) / time);
+				+ ((bytesSent / 1024) / 128 / time));
 	}
 
 	static void ServerMode() {
@@ -84,17 +84,24 @@ public class Iperfer {
 			Socket connectionSocket = welcomeSocket.accept();
 			BufferedReader inFromClient = new BufferedReader(
 					new InputStreamReader(connectionSocket.getInputStream()));
-
+			
+			boolean started = false;
+			long startTime = 0;
 			while (read != -1) {
-
 				read = inFromClient.read(arr, 0, 1024);
-				totalRead += read;
+				if( !started ) {
+					startTime = System.currentTimeMillis();
+					started = true;
+				}
+				totalRead += 1024;
 
 			}
-
+			// HACK
+			totalRead -= 1024;
+			time = (System.currentTimeMillis() - startTime) / 1000;
+			
 			System.out.println("received=" + totalRead / 1024 + " KB rate="
-					+ ((totalRead / 1024) / 128)
-					/ (System.currentTimeMillis() / (time * 1000)));
+					+ (int)((totalRead / 1024) / 128 / time));
 		}
 
 		catch (IOException e1) {
@@ -122,7 +129,7 @@ public class Iperfer {
 				hostName = args[index + 1];
 				break;
 			case "-t":
-				time = Integer.parseInt(args[index + 1]);
+				time = Double.parseDouble(args[index + 1]);
 				break;
 			case "-c":
 				isClient = true;
