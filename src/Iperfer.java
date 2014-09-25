@@ -70,7 +70,7 @@ public class Iperfer {
 		}
 
 		System.out.println("sent=" + bytesSent / 1024 + "KB" + " rate="
-				+ ((bytesSent / 1024) / 128 / time));
+				+ ((bytesSent / 1024) / 128 / time) + " Mbps");
 	}
 
 	static void ServerMode() {
@@ -101,7 +101,7 @@ public class Iperfer {
 			time = (System.currentTimeMillis() - startTime) / 1000;
 			
 			System.out.println("received=" + totalRead / 1024 + " KB rate="
-					+ (int)((totalRead / 1024) / 128 / time));
+					+ (int)((totalRead / 1024) / 128 / time)+ " Mpbs" );
 		}
 
 		catch (IOException e1) {
