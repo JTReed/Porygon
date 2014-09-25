@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 
 public class Iperfer {
 	public static boolean isClient; //
@@ -69,8 +70,12 @@ public class Iperfer {
 			System.err.println("I/O Error on host");
 		}
 
-		System.out.println("sent=" + bytesSent / 1024 + "KB" + " rate="
-				+ ((bytesSent / 1024) / 128 / time) + " Mbps");
+		int sent = bytesSent/1024;
+		double Mbps = bytesSent/1024/128/time;
+		BigDecimal bd = new BigDecimal(Mbps);
+		bd = bd.setScale(3, bd.ROUND_HALF_UP);
+
+		System.out.println("sent=" + sent + " KB rate=" + bd.toString() + " Mbps");
 	}
 
 	static void ServerMode() {
@@ -93,15 +98,19 @@ public class Iperfer {
 					startTime = System.currentTimeMillis();
 					started = true;
 				}
-				totalRead += 1024;
+				totalRead += read;
 
 			}
 			// HACK
-			totalRead -= 1024;
+			totalRead += 1;
 			time = (System.currentTimeMillis() - startTime) / 1000;
-			
-			System.out.println("received=" + totalRead / 1024 + " KB rate="
-					+ (int)((totalRead / 1024) / 128 / time)+ " Mpbs" );
+		
+			int received = totalRead/1024;
+			double Mpbs = totalRead/1024/128/time;
+			BigDecimal bd = new BigDecimal(Mpbs);
+			bd = bd.setScale(3, bd.ROUND_HALF_UP);
+	
+			System.out.println("received=" + received + " KB rate="	+ bd.toString() + " Mbps" );
 		}
 
 		catch (IOException e1) {
