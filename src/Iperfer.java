@@ -55,11 +55,11 @@ public class Iperfer
 		} 
 
 		catch(SocketException e){
-			System.err.println("No host or port for given connection");
+			System.err.println("No host or port for given connection, " + e);
 		}
 
 		catch(IOException e){
-			System.err.println("I/O Error on host");
+			System.err.println("I/O Error on host, " + e);
 		}
 
 		byte[] arr = new byte[1024];
