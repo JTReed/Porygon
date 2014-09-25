@@ -51,6 +51,7 @@ public class Iperfer
 		try {			
 			socket = new Socket("localhost", port);
 			outToServer = new DataOutputStream(socket.getOutputStream());
+			System.out.println( "output stream: " + outToServer.toString() );
 		} 
 
 		catch(SocketException e){
