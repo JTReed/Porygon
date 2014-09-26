@@ -47,7 +47,6 @@ public class Iperfer {
 
 			byte[] arr = new byte[1024];
 
-			System.out.println(arr.toString());
 			long startTime = System.currentTimeMillis();
 
 			while (System.currentTimeMillis() - startTime < time * 1000) {
