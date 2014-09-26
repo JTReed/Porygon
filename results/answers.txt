@@ -26,7 +26,7 @@ Latency: We predict that ping time will end up being slightly higher than if onl
 	* Still same results - pretty much expected speed + a ms for the 2nd client
 
 Throughput: We predict that throughput will decrease - there will be some collisions and therefore some recovery, thus the number of bytes arriving at the server per second will decrease.
-	The more hosts, the more of a delay (three less than two, etc.). Lower throughput = lower bandwidth.
+	The more hosts, the more of a delay (three less than two, etc.). Lower throughput = lower bandwidth. We suspect the difference will be marginal.
 - Trial 1
 	- h1->h4: sent=53375 KB rate=20.800 Mbps
 		  received=53375 KB rate=17.333 Mbps
@@ -52,3 +52,10 @@ Q4:
 Latency: We predict a combination between the last two problems. General time will be determined by the time it takes to ping over all the paths, but since two will be using the path L2, that time will be a little longer than expected. So instead of 181ms and 41 ms, I expect to see something like 182ms and 42ms.
 * The values weren't changed much at all. L2 is a pretty small-delay link (20ms), so that could potentially have to do with it? Not much congestion to bog stuff down.
 
+Throughput:We predict, like in Q3, there will be delays associated.
+	There will be collisions, and therefore  major delay. We expect about half. 
+	We believe this will be because the information will have to alternate sending each clients' information to the destination over L2 (where they overlap). 
+	Half would be about 20 Mbps.
+- h1->h4: 21.200 Mbps
+- h5->h6: 22.500 Mbps
+* This was right on par with our prediction.
