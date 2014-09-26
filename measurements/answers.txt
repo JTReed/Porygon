@@ -1,0 +1,61 @@
+Q2: 
+Latency: We predict that to ping from h1 to h4, which will pass through switch links 	L1, L2, and L3, it will take sum of the individual pings for those links. 
+	- 80ms + 20ms + 81ms = 181ms average rtt
+Throughput: According to the Q1 results, throughput was about 20 Mbps on L1, 40 Mbps on L2 and 20 Mbps on L3. 
+	We suspect that throughput will average between the switches, to be about 26 or 27 Mbps.
+	Client: sent=54323 KB rate=21.200 Mbps
+	Server: received=54323 KB rate=16.960 Mbps
+	Our prediction for throughput was wrong. 
+	We initially thought to average the speed of the transfer, but, of course, forgot to think about the latency. 
+	There is a delay in the transfer of the bytes to the server due to passing through three switches. 
+	Therefore, fewer bytes are being transferred per second.
+
+Q3:
+Latency: We predict that ping time will end up being slightly higher than if only one host was requesting a ping back due to any waiting that has to happen. Also, there is a chance that some packets may be dropped.
+- Trial 1
+	- h1->h4: sent=20 received=20 lost=0% rtt min/avg/max=180/181/190ms
+	- h8->h4: sent=20 received=20 lost=0% rtt min/avg/max=180/182/196ms
+	* No packets were dropped as the server returns packets immediately with no downtime to extend past the 1s timeout period.  h8 was started a fraction of a second after h1, so I assume that the 1ms longer time is due to having to wait for the server to return h1's packet first. Since the packets are so small, I can't imagine that much collision would happen due to bandwidth constraints.
+- Trial 2
+	- h7->h9: sent=20 received=20 lost=0% rtt min/avg/max=180/181/190ms
+	- h8->h9: sent=20 received=20 lost=0% rtt min/avg/max=180/182/192ms
+	* Again, the server started 2nd takes a tiny fraction of time longer
+- Trial 3
+	- h4->h1: sent=20 received=20 lost=0% rtt min/avg/max=180/181/191ms
+	- h9->h1: sent=20 received=20 lost=0% rtt min/avg/max=180/182/194ms
+	* Still same results - pretty much expected speed + a ms for the 2nd client
+
+Throughput: We predict that throughput will decrease - there will be some collisions and therefore some recovery, thus the number of bytes arriving at the server per second will decrease.
+	The more hosts, the more of a delay (three less than two, etc.). Lower throughput = lower bandwidth. We suspect the difference will be marginal.
+- Trial 1
+	- h1->h4: sent=53375 KB rate=20.800 Mbps
+		  received=53375 KB rate=17.333 Mbps
+	- h7->h4: sent=523 KB rate=0.200 Mbps
+		  received=523 KB rate=4.000 Mbps
+- Trial 2
+	- h1->h9: sent=49604 KB rate=19.350 Mbps
+		  received=49604 KB rate=16.125 Mbps
+	- h7->h9: sent=1114 KB rate=0.400 Mbps
+		  received=1114 KB rate=8.000 Mbps
+- Trial 3
+	- h1->h10: sent=53508 KB rate=20.900 Mbps
+		   received=53508 KB rate=16.720 Mbps
+	- h7->h10: sent=523 KB rate=0.200 Mbps
+		   received=523 KB rate=4.000 Mbps
+	Our prediction was slightly wrong and slightly correct. 
+	As can be seen, there is definitely a delay in data transfer as you increase clients; but what wasn't explicitly stated was that server handles one client at a time, even when they are launched about the same time. 
+	In every case, host 1 (client 1) was launched first, and completed it's transfer before host 7 (the second cleient) was allowed to send data. 
+	This means that client two was launched nearly at the same time, but had to wait for the port to be available - lowereing the bandwidth.
+		   
+
+Q4:
+Latency: We predict a combination between the last two problems. General time will be determined by the time it takes to ping over all the paths, but since two will be using the path L2, that time will be a little longer than expected. So instead of 181ms and 41 ms, I expect to see something like 182ms and 42ms.
+* The values weren't changed much at all. L2 is a pretty small-delay link (20ms), so that could potentially have to do with it? Not much congestion to bog stuff down.
+
+Throughput:We predict, like in Q3, there will be delays associated.
+	There will be collisions, and therefore  major delay. We expect about half. 
+	We believe this will be because the information will have to alternate sending each clients' information to the destination over L2 (where they overlap). 
+	Half would be about 20 Mbps.
+- h1->h4: 21.200 Mbps
+- h5->h6: 22.500 Mbps
+* This was right on par with our prediction.

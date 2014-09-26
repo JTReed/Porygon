@@ -30,6 +30,7 @@ public class Iperfer {
 				System.out.println("Starting up in Server Mode");
 
 			ServerMode();
+			
 		}
 
 	}
@@ -79,6 +80,7 @@ public class Iperfer {
 	}
 
 	static void ServerMode() {
+		
 		int read = 0;
 		int totalRead = 1;
 		char[] arr = new char[1024];
@@ -86,32 +88,42 @@ public class Iperfer {
 		try {
 
 			welcomeSocket = new ServerSocket(port);
-			Socket connectionSocket = welcomeSocket.accept();
-			BufferedReader inFromClient = new BufferedReader(
-					new InputStreamReader(connectionSocket.getInputStream()));
+			//Socket connectionSocket = welcomeSocket.accept();
+			//BufferedReader inFromClient = new BufferedReader(
+			//		new InputStreamReader(connectionSocket.getInputStream()));
 			
 			boolean started = false;
 			long startTime = 0;
-			while (read != -1) {
-				read = inFromClient.read(arr, 0, 1024);
-				if( !started ) {
-					startTime = System.currentTimeMillis();
-					started = true;
-				}
-				totalRead += read;
+			while(true){
+			//	welcomeSocket = new ServerSocket(port);
+				Socket connectionSocket = welcomeSocket.accept();
+				BufferedReader inFromClient = new BufferedReader(
+					new InputStreamReader(connectionSocket.getInputStream()));
+				read = 0;
+				started = false;
+				totalRead = 1;
+				while (read != -1) {
+					read = inFromClient.read(arr, 0, 1024);
+					if( !started ) {
+						startTime = System.currentTimeMillis();
+						started = true;
+					}
+					totalRead += read;
 
-			}
-			// HACK
-			totalRead += 1;
-			time = (System.currentTimeMillis() - startTime) / 1000;
+				}
+				// HACK
+				totalRead += 1;
+				time = (System.currentTimeMillis() - startTime) / 1000;
 		
-			int received = totalRead/1024;
-			double Mpbs = totalRead/1024/128/time;
-			BigDecimal bd = new BigDecimal(Mpbs);
-			bd = bd.setScale(3, bd.ROUND_HALF_UP);
+				int received = totalRead/1024;
+				double Mpbs = totalRead/1024/128/time;
+				BigDecimal bd = new BigDecimal(Mpbs);
+				bd = bd.setScale(3, bd.ROUND_HALF_UP);
 	
-			System.out.println("received=" + received + " KB rate="	+ bd.toString() + " Mbps" );
-		}
+				System.out.println("received=" + received + " KB rate="	+ bd.toString() + " Mbps" );
+				
+				}
+			}
 
 		catch (IOException e1) {
 			System.err.println("I/O Error on host");
