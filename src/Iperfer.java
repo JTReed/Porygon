@@ -87,14 +87,11 @@ public class Iperfer {
 		try {
 
 			welcomeSocket = new ServerSocket(port);
-			//Socket connectionSocket = welcomeSocket.accept();
-			//BufferedReader inFromClient = new BufferedReader(
-			//		new InputStreamReader(connectionSocket.getInputStream()));
-			
+						
 			boolean started = false;
 			long startTime = 0;
 			while(true){
-			//	welcomeSocket = new ServerSocket(port);
+			
 				Socket connectionSocket = welcomeSocket.accept();
 				BufferedReader inFromClient = new BufferedReader(
 					new InputStreamReader(connectionSocket.getInputStream()));
@@ -110,7 +107,6 @@ public class Iperfer {
 					totalRead += read;
 
 				}
-				// HACK
 				totalRead += 1;
 				time = (System.currentTimeMillis() - startTime) / 1000;
 		
@@ -121,8 +117,8 @@ public class Iperfer {
 	
 				System.out.println("received=" + received + " KB rate="	+ bd.toString() + " Mbps" );
 				
-				}
-			}
+			}//end while loop
+		}//end try
 
 		catch (IOException e1) {
 			System.err.println("I/O Error on host");
