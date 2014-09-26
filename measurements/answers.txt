@@ -50,6 +50,8 @@ Throughput: We predict that throughput will decrease - there will be some collis
 
 Q4:
 Latency: We predict a combination between the last two problems. General time will be determined by the time it takes to ping over all the paths, but since two will be using the path L2, that time will be a little longer than expected. So instead of 181ms and 41 ms, I expect to see something like 182ms and 42ms.
+- sent=20 received=20 lost=0% rtt min/avg/max=180/181/189ms
+- sent=20 received=20 lost=0% rtt min/avg/max=40/41/49ms
 * The values weren't changed much at all. L2 is a pretty small-delay link (20ms), so that could potentially have to do with it? Not much congestion to bog stuff down.
 
 Throughput:We predict, like in Q3, there will be delays associated.
