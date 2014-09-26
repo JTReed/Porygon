@@ -26,15 +26,27 @@ Latency: We predict that ping time will end up being slightly higher than if onl
 	* Still same results - pretty much expected speed + a ms for the 2nd client
 
 Throughput: We predict that throughput will decrease - there will be some collisions and therefore some recovery, thus the number of bytes arriving at the server per second will decrease.
-	The more hosts, the more of a delay (three less than two, etc.).
+	The more hosts, the more of a delay (three less than two, etc.). Lower throughput = lower bandwidth.
 - Trial 1
-
+	- h1->h4: sent=53375 KB rate=20.800 Mbps
+		  received=53375 KB rate=17.333 Mbps
+	- h7->h4: sent=523 KB rate=0.200 Mbps
+		  received=523 KB rate=4.000 Mbps
 - Trial 2
-
+	- h1->h9: sent=49604 KB rate=19.350 Mbps
+		  received=49604 KB rate=16.125 Mbps
+	- h7->h9: sent=1114 KB rate=0.400 Mbps
+		  received=1114 KB rate=8.000 Mbps
 - Trial 3
-	
-	
-
+	- h1->h10: sent=53508 KB rate=20.900 Mbps
+		   received=53508 KB rate=16.720 Mbps
+	- h7->h10: sent=523 KB rate=0.200 Mbps
+		   received=523 KB rate=4.000 Mbps
+	Our prediction was slightly wrong and slightly correct. 
+	As can be seen, there is definitely a delay in data transfer as you increase clients; but what wasn't explicitly stated was that server handles one client at a time, even when they are launched about the same time. 
+	In every case, host 1 (client 1) was launched first, and completed it's transfer before host 7 (the second cleient) was allowed to send data. 
+	This means that client two was launched nearly at the same time, but had to wait for the port to be available - lowereing the bandwidth.
+		   
 
 Q4:
 Latency: We predict a combination between the last two problems. General time will be determined by the time it takes to ping over all the paths, but since two will be using the path L2, that time will be a little longer than expected. So instead of 181ms and 41 ms, I expect to see something like 182ms and 42ms.
